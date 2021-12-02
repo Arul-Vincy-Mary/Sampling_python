@@ -1,0 +1,112 @@
+#problem statement
+#The objective of this problem is to, identify which customer segment each wine belongs to. So that you can recommend the wine to the right customer.
+#This  will optimize the sale and increase the profit of Wine Shop.
+#This dataset is particularly interesting to illustrate classification problems as well as it is great for  PCA application. 
+#It has enough features to see the true benefit of dimensionality reduction.
+
+
+
+import os
+os.chdir("D:/ml")
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+
+
+# importing WINE data set
+wine =pd.read_csv("wine_data.csv")
+
+
+# Information on the data
+wine.info()
+wine.head(10)
+wine.shape
+
+# Determining the unique Wines
+wine['Class label'].unique()
+
+#sort the column 'Class label
+x = wine['Class label']
+
+
+#drop the class label column
+wine = wine.drop(['Class label'], axis=1)
+
+#Standardizing the dataset
+scaler = StandardScaler().fit_transform(wine)
+scaler.T
+
+
+#calculating the covariance
+input_data = scaler.T
+covariance_matrix = np.cov(input_data)
+
+
+
+#eigen decomposition
+s,v = np.linalg.eig(covariance_matrix)
+s[:5]
+v[:5]
+
+# Explained variance by each eigen value/PC
+exp_variences = []
+for i in range(len(s)):
+    exp_variences.append(s[i] / np.sum(s))
+ 
+print(np.sum(exp_variences))
+print(exp_variences)
+sum(exp_variences[:7])
+
+
+# Rotating and trnsforming from sample space to feature space
+p1 = scaler.dot(v.T[0])
+p2 = scaler.dot(v.T[1])
+p3 = scaler.dot(v.T[2])
+p4 = scaler.dot(v.T[3])
+p5 = scaler.dot(v.T[4])
+p6 = scaler.dot(v.T[5])
+p7 = scaler.dot(v.T[6])
+p8 = scaler.dot(v.T[7])
+p9 = scaler.dot(v.T[8])
+p10 = scaler.dot(v.T[9])
+p11 = scaler.dot(v.T[10])
+p12 = scaler.dot(v.T[11])
+p13 = scaler.dot(v.T[12])
+
+
+# Storing the PCs in the data frame
+pc = pd.DataFrame(p1, columns=['PC1'])
+pc['PC2'] = p2
+pc['PC3'] = p3
+pc['PC4'] = p4
+pc['PC5'] = p5
+pc['PC6'] = p6
+pc['PC7'] = p6
+pc['PC8'] = p6
+pc['PC9'] = p6
+pc['PC10'] = p6
+pc['PC11'] = p6
+pc['PC12'] = p6
+pc['PC13'] = p6
+pc['x'] = x
+pc.head()
+
+
+# Choosing the extent of variance to be covered by the PCs
+pca = PCA(n_components=2)
+pca.fit(scaler)
+x_pca = pca.transform(scaler)
+
+print(pca.explained_variance_ratio_)
+
+scaler.shape
+x_pca.shape
+
+plt.subplots(figsize=(8,6))
+sns.scatterplot(x='PC1', y='PC2', hue=pc['x'], data=pc)
+plt.show()
+
